@@ -21,13 +21,17 @@ def parse_options(argv)
     o.on '--aws-region=[VALUE]', "AWS REGION" do |arg|
       opts[:aws_region] = arg
     end
-    
+
     o.on '--aws-access-key=[VALUE]', "AWS ACCESS KEY" do |arg|
       opts[:aws_access_key] = arg
     end
-    
+
     o.on '--aws-secret-key=[VALUE]', "AWS SECRET KEY" do |arg|
       opts[:aws_secret_key] = arg
+    end
+
+    o.on '--profile=[VALUE]', "AWS profile credentials" do |arg|
+      opts[:profile] = arg
     end
 
     o.on '--discribe-groups', "Describe log groups" do |arg|
@@ -87,7 +91,13 @@ def validate_params(options)
 end
 
 def cloudwatch_client(options)
-  if options[:use_iamrole]
+  if options[:profile]
+    credentials = Aws.config[:credentials] = Aws::SharedCredentials.new(profile_name: options[:profile])
+    Aws::CloudWatchLogs::Client.new(
+      region: options[:aws_region],
+      credentials: credentials
+    )
+  elsif options[:use_iamrole]
     Aws::CloudWatchLogs::Client.new(
       region: options[:aws_region]
     )
@@ -160,7 +170,7 @@ if options[:discribe_streams]
   exit!
 end
 
-if options[:tail] || options[:tailf] 
+if options[:tail] || options[:tailf]
   tail_stream(options)
   exit!
 end

@@ -18,6 +18,7 @@ Usage: tail_cwlog [options]
         --aws-region=[VALUE]         AWS REGION
         --aws-access-key=[VALUE]     AWS ACCESS KEY
         --aws-secret-key=[VALUE]     AWS SECRET KEY
+        --profile=[VALUE]            AWS profile credentials
         --discribe-groups            Describe log groups
         --discribe-streams           Describe log streams
         --tailf                      tail -f log stream
